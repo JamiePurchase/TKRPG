@@ -2,14 +2,25 @@ package projects;
 
 import app.Engine;
 import file.FileService;
+import framework.files.FileItem;
+import framework.files.FileType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import states.State;
 
 public class ProjectManager
 {
+    private State state;
+    private String project;
     
-    public static void createProject(String name)
+    public ProjectManager(State state, String project)
+    {
+        this.state = state;
+        this.project = project;
+    }
+    
+    public void createProject(String name)
     {
         // Create the project file
         FileService.saveFile(name, getProjectDirectory(name + ".tk7pro"));
@@ -26,12 +37,12 @@ public class ProjectManager
         // Update ??? (list of recent projects?)
     }
     
-    public static String getPath(String name)
+    public String getPath(String name)
     {
         return Engine.getAppVariable("BUILDER_PATH") + "Projects/" + name + ".tk7pro";
     }
     
-    public static ProjectFile getProject(File file)
+    public ProjectFile getProject(File file)
     {
         String path = "";
         Date update = new Date();
@@ -41,28 +52,36 @@ public class ProjectManager
         // NOTE: need to get the update value as a string (from the file) and parse it into a date
     }
     
-    public static ArrayList<ProjectFile> getProjectArray()
+    public ProjectFile getProject(FileItem file)
+    {
+        return getProject(file.getPath());
+    }
+    
+    //public ArrayList<ProjectFile> getProjectArray()
+    public ArrayList<FileItem> getProjectArray()
     {
         ArrayList<File> files = FileService.getFolder(getProjectDirectory(), true, false, "tk7pro");
-        ArrayList<ProjectFile> projects = new ArrayList();
+        //ArrayList<ProjectFile> projects = new ArrayList();
+        ArrayList<FileItem> projects = new ArrayList();
         for(int x = 0; x < files.size(); x++)
         {
-            projects.add(getProject(files.get(x)));
+            //projects.add(getProject(files.get(x)));
+            projects.add(new FileItem(files.get(x).getAbsoluteFile(), FileType.PROJECT));
         }
         return projects;
     }
     
-    private static String getProjectDirectory()
+    private String getProjectDirectory()
     {
         return Engine.getAppVariable("BUILDER_PATH") + "Projects/";
     }
     
-    private static String getProjectDirectory(String extend)
+    private String getProjectDirectory(String extend)
     {
         return getProjectDirectory() + extend;
     }
     
-    private static ArrayList<String> getProjectFolders()
+    private ArrayList<String> getProjectFolders()
     {
         ArrayList<String> folders = new ArrayList();
         folders.add("Boards");

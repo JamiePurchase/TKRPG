@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import lava.LavaFile;
 import projects.ProjectFile;
-import static projects.ProjectManager.getProject;
+import projects.ProjectManager;
 import states.State;
 import framework.files.FileItem;
 import framework.files.FileType;
