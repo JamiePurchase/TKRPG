@@ -4,6 +4,7 @@ import app.Engine;
 import file.FileService;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ProjectManager
 {
@@ -32,7 +33,12 @@ public class ProjectManager
     
     public static ProjectFile getProject(File file)
     {
-        return new ProjectFile(FileService.getFileName(file));
+        String path = "";
+        Date update = new Date();
+        return new ProjectFile(path, FileService.getFileName(file), update);
+        
+        // NOTE: need to insert the path here
+        // NOTE: need to get the update value as a string (from the file) and parse it into a date
     }
     
     public static ArrayList<ProjectFile> getProjectArray()

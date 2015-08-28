@@ -7,7 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import states.State;
 import framework.files.FileItem;
-import tools.files.FileType;
+import framework.files.FileType;
+import java.util.Date;
 
 public class TilesetManager
 {
@@ -58,7 +59,10 @@ public class TilesetManager
         int sizeTile = Integer.parseInt(data.get(2).split("\\|")[0]);
         int sizeCols = Integer.parseInt(data.get(2).split("\\|")[1]);
         int sizeRows = Integer.parseInt(data.get(2).split("\\|")[2]);
-        return new TilesetFile(getPath(file), project, file, data.get(0), data.get(1), sizeTile, sizeCols, sizeRows);
+        Date update = new Date();
+        return new TilesetFile(getPath(file), project, file, data.get(0), update, data.get(1), sizeTile, sizeCols, sizeRows);
+        
+        // NOTE: need to get the update value as a string (from the file) and parse it into a date
     }
     
 }

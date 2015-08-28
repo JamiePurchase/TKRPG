@@ -7,7 +7,7 @@ import gfx.Drawing;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
-import tools.files.FileType;
+import framework.files.FileType;
 
 public class TilesetFile extends FileAbstract
 {
@@ -19,7 +19,7 @@ public class TilesetFile extends FileAbstract
     
     public TilesetFile(String path, String project, String file, String name, Date update, String sheet, int size, int cols, int rows)
     {
-        super(path, project, FileType.TILESET, update);
+        super(name, path, project, FileType.TILESET, update);
         this.tilesetName = name;
         this.tilesetSheetFile = sheet;
         this.tilesetSheetImage = Drawing.getImageFile(sheet);
@@ -52,13 +52,13 @@ public class TilesetFile extends FileAbstract
         return this.tilesetDimension;
     }
     
-    public ArrayList<String> saveData()
+    public void save()
     {
         ArrayList<String> data = new ArrayList();
         data.add(this.tilesetName);
         data.add(this.tilesetSheetFile);
         data.add(this.tilesetCountX + "|" + this.tilesetCountY + "|" + this.tilesetDimension);
-        return data;
+        this.saveFile(data);
     }
     
     private String savePath()

@@ -3,24 +3,20 @@ package audio;
 import framework.files.FileAbstract;
 import java.util.ArrayList;
 import java.util.Date;
-import tools.files.FileType;
+import framework.files.FileType;
 
 public class AudioPlaylist extends FileAbstract
 {
     
     public AudioPlaylist(String path, String project, String name, Date update)
     {
-        super(path, project, FileType.PLAYLIST, update);
+        super(name, path, project, FileType.PLAYLIST, update);
     }
     
-    private ArrayList<String> saveData()
+    public void save()
     {
-        
-    }
-    
-    private String savePath()
-    {
-        
+        ArrayList<String> data = new ArrayList();
+        this.saveFile(data);
     }
     
 }

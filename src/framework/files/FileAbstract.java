@@ -39,14 +39,12 @@ public abstract class FileAbstract
         return this.fileUpdate;
     }
     
-    public void save()
+    public abstract void save();
+    
+    public void saveFile(ArrayList<String> data)
     {
-        FileService.saveFile(this.saveData(), this.savePath());
+        FileService.saveFile(data, this.getFilePath());
     }
-    
-    public abstract ArrayList<String> saveData();
-    
-    public abstract String savePath();
     
     public void setFileUpdate()
     {

@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import states.State;
 import framework.files.FileType;
+import java.util.Date;
 
 public class BoardManager
 {
@@ -53,7 +54,10 @@ public class BoardManager
         // Create the Board Object
         int sizeX = Integer.parseInt(data.get(1).split("\\|")[0]);
         int sizeY = Integer.parseInt(data.get(1).split("\\|")[1]);
-        BoardFile board = new BoardFile(getPath(file), project, file, data.get(0), sizeX, sizeY);
+        Date update = new Date();
+        BoardFile board = new BoardFile(getPath(file), project, update, file, data.get(0), sizeX, sizeY);
+        
+        // NOTE: need to get the update value as a string (from the file) and parse it into a date
         
         // Set the Board Terrain
         int tileX = 0;
@@ -67,7 +71,7 @@ public class BoardManager
             tileSet = data.get(tile + 2).split("\\|")[0];
             tileCol = Integer.parseInt(data.get(tile + 2).split("\\|")[1]);
             tileRow = Integer.parseInt(data.get(tile + 2).split("\\|")[2]);
-            board.setTerrainAt(tileX, tileY, new BoardTerrain(this.state.managerTileset.loadTileset(tileSet), tileCol, tileRow));
+            //board.setTerrainAt(tileX, tileY, new BoardTerrain(this.state.managerTileset.loadTileset(tileSet), tileCol, tileRow));
             
             // Next Tile
             tileX ++;

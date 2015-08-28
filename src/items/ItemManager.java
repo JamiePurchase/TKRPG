@@ -4,18 +4,19 @@ import app.Engine;
 import file.FileService;
 import java.io.File;
 import java.util.ArrayList;
-import projects.Project;
+import java.util.Date;
+import projects.ProjectFile;
 import static projects.ProjectManager.getProject;
-import states.StateBuilder;
-import tools.files.FileItem;
-import tools.files.FileType;
+import states.State;
+import framework.files.FileItem;
+import framework.files.FileType;
 
 public class ItemManager
 {
-    private StateBuilder state;
+    private State state;
     private String project;
     
-    public ItemManager(StateBuilder state, String project)
+    public ItemManager(State state, String project)
     {
         this.state = state;
         this.project = project;
@@ -60,7 +61,10 @@ public class ItemManager
         // Create the Item Object
         boolean key = false;
         if(data.get(2).equals("TRUE")) {key = true;}
-        ItemFile item = new ItemFile(this.project, file, data.get(0), data.get(1), key);
+        Date update = new Date();
+        ItemFile item = new ItemFile(getPath(file), this.project, file, data.get(0), update, data.get(1), key);
+        
+        // NOTE: need to get the update value as a string (from the file) and parse it into a date
         
         // Return the Item Object
         return item;

@@ -1,12 +1,12 @@
 package items;
 
 import app.Engine;
-import config.ConfigManager;
+//import config.ConfigManager;
 import file.FileService;
 import framework.files.FileAbstract;
 import java.util.ArrayList;
 import java.util.Date;
-import tools.files.FileType;
+import framework.files.FileType;
 
 public class ItemFile extends FileAbstract
 {
@@ -16,7 +16,7 @@ public class ItemFile extends FileAbstract
     
     public ItemFile(String path, String project, String file, String name, Date update, String type, boolean key)
     {
-        super(path, project, FileType.ITEM, update);
+        super(name, path, project, FileType.ITEM, update);
         this.itemProject = project;
         this.itemFile = file;
         this.itemName = name;

@@ -1,27 +1,33 @@
 package quests;
 
+import framework.files.FileAbstract;
+import framework.files.FileType;
 import java.util.ArrayList;
 import java.util.Date;
-import system.ID;
 
 public class QuestFile extends FileAbstract
 {
-    private ID id;
     private String name;
     private boolean stateFound, stateActive, stateComplete;
     private int stageNow;
-    private ArrayList<Stage> stageArray;
+    private ArrayList<QuestStage> stageArray;
     
-    public QuestFile(ID id, String name, boolean found, boolean active, boolean complete, int stageNow, ArrayList<Stage> stageArray)
+    public QuestFile(String path, String project, Date update, String name, boolean found, boolean active, boolean complete, int stageNow, ArrayList<QuestStage> stageArray)
     {
-        super(path, project, FileType.QUEST, update)
-        this.id = id;
+        super(name, path, project, FileType.QUEST, update);
         this.name = name;
         this.stateFound = found;
         this.stateActive = active;
         this.stateComplete = complete;
         this.stageNow = stageNow;
         this.stageArray = stageArray;
+    }
+    
+    public void save()
+    {
+        ArrayList<String> data = new ArrayList();
+        // data.add();
+        this.saveFile(data);
     }
     
 }

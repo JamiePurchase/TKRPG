@@ -56,7 +56,7 @@ public class BoardFile extends FileAbstract
         return this.boardTerrain[posX][posY];
     }
     
-    public ArrayList<String> saveData()
+    public void save()
     {
         System.out.println("BOARD FILE -> SAVE");
         
@@ -71,7 +71,7 @@ public class BoardFile extends FileAbstract
                 data.add(this.getTerrainAt(x, y).getData());
             }
         }
-        return data;
+        this.saveFile(data);
     }
     
     public String savePath()
