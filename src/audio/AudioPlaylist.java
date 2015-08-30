@@ -1,14 +1,14 @@
 package audio;
 
 import framework.files.FileAbstract;
+import framework.files.FileDate;
 import java.util.ArrayList;
-import java.util.Date;
 import framework.files.FileType;
 
 public class AudioPlaylist extends FileAbstract
 {
     
-    public AudioPlaylist(String path, String project, String name, Date update)
+    public AudioPlaylist(String path, String project, String name, FileDate update)
     {
         super(name, path, project, FileType.PLAYLIST, update);
     }

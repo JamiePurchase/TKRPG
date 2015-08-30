@@ -2,24 +2,25 @@ package lava;
 
 import app.Engine;
 import file.FileService;
+import framework.files.FileDate;
 import java.io.File;
 import java.util.ArrayList;
 import lava.LavaFile;
 import projects.ProjectFile;
 import projects.ProjectManager;
-import states.State;
 import framework.files.FileItem;
+import framework.files.FileManager;
 import framework.files.FileType;
 import java.util.Date;
 
 public class LavaManager
 {
-    private State state;
+    private FileManager manager;
     private String project;
     
-    public LavaManager(State state, String project)
+    public LavaManager(FileManager manager, String project)
     {
-        this.state = state;
+        this.manager = manager;
         this.project = project;
     }
     
@@ -29,7 +30,7 @@ public class LavaManager
         ArrayList<FileItem> lava = new ArrayList();
         for(int x = 0; x < files.size(); x++)
         {
-            lava.add(new FileItem(files.get(x), FileType.LAVA));
+            lava.add(new FileItem(files.get(x), FileType.LAVA, files.get(x).lastModified()));
         }
         return lava;
     }
@@ -55,10 +56,7 @@ public class LavaManager
         ArrayList<String> data = FileService.loadFile(file);
         
         // Create the Lava Object
-        Date update = new Date();
-        LavaFile lava = new LavaFile(getPath(file), this.project, file, data.get(0), update);
-        
-        // NOTE: need to get the update value as a string (from the file) and parse it into a date
+        LavaFile lava = new LavaFile(getPath(file), this.project, file, data.get(0), new FileDate(data.get(1)));
         
         // Return the Lava Object
         return lava;

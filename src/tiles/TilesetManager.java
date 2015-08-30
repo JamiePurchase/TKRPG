@@ -2,32 +2,33 @@ package tiles;
 
 import app.Engine;
 import file.FileService;
+import framework.files.FileDate;
 import items.ItemFile;
 import java.io.File;
 import java.util.ArrayList;
-import states.State;
 import framework.files.FileItem;
+import framework.files.FileManager;
 import framework.files.FileType;
 import java.util.Date;
 
 public class TilesetManager
 {
-    private State state;
+    private FileManager manager;
     private String project;
     
-    public TilesetManager(State state, String project)
+    public TilesetManager(FileManager manager, String project)
     {
-        this.state = state;
+        this.manager = manager;
         this.project = project;
     }
     
-    public ArrayList<FileItem> getItemArray()
+    public ArrayList<FileItem> getTilesetArray()
     {
         ArrayList<File> files = FileService.getFolder(getTilesetDirectory(), true, false, "tk7tst");
         ArrayList<FileItem> tilesets = new ArrayList();
         for(int x = 0; x < files.size(); x++)
         {
-            tilesets.add(new FileItem(files.get(x), FileType.TILESET));
+            tilesets.add(new FileItem(files.get(x), FileType.TILESET, files.get(x).lastModified()));
         }
         return tilesets;
     }
@@ -52,15 +53,12 @@ public class TilesetManager
         // Load the Tileset File
         ArrayList<String> data = FileService.loadFile(getPath(file));
         
-        // Debug
-        System.out.println(data);
-        
         // Create the Tileset Object
-        int sizeTile = Integer.parseInt(data.get(2).split("\\|")[0]);
-        int sizeCols = Integer.parseInt(data.get(2).split("\\|")[1]);
-        int sizeRows = Integer.parseInt(data.get(2).split("\\|")[2]);
+        int sizeTile = Integer.parseInt(data.get(3).split("\\|")[0]);
+        int sizeCols = Integer.parseInt(data.get(3).split("\\|")[1]);
+        int sizeRows = Integer.parseInt(data.get(3).split("\\|")[2]);
         Date update = new Date();
-        return new TilesetFile(getPath(file), project, file, data.get(0), update, data.get(1), sizeTile, sizeCols, sizeRows);
+        return new TilesetFile(getPath(file), project, file, data.get(0), new FileDate(data.get(1)), data.get(2), sizeTile, sizeCols, sizeRows);
         
         // NOTE: need to get the update value as a string (from the file) and parse it into a date
     }

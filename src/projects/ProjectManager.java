@@ -2,25 +2,19 @@ package projects;
 
 import app.Engine;
 import file.FileService;
+import framework.files.FileDate;
 import framework.files.FileItem;
+import framework.files.FileManager;
 import framework.files.FileType;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import states.State;
 
 public class ProjectManager
 {
-    private State state;
-    private String project;
     
-    public ProjectManager(State state, String project)
-    {
-        this.state = state;
-        this.project = project;
-    }
-    
-    public void createProject(String name)
+    public static void createProject(String name)
     {
         // Create the project file
         FileService.saveFile(name, getProjectDirectory(name + ".tk7pro"));
@@ -37,28 +31,32 @@ public class ProjectManager
         // Update ??? (list of recent projects?)
     }
     
-    public String getPath(String name)
+    public static String getPath(String name)
     {
         return Engine.getAppVariable("BUILDER_PATH") + "Projects/" + name + ".tk7pro";
     }
     
-    public ProjectFile getProject(File file)
+    public static ProjectFile getProject(File file)
     {
-        String path = "";
-        Date update = new Date();
-        return new ProjectFile(path, FileService.getFileName(file), update);
+        // Load the Project File
+        ArrayList<String> data = FileService.loadFile(file.getPath());
+        return new ProjectFile(file.getPath(), data.get(0), new FileDate(data.get(1)), data.get(2), data.get(3));
         
-        // NOTE: need to insert the path here
         // NOTE: need to get the update value as a string (from the file) and parse it into a date
     }
     
-    public ProjectFile getProject(FileItem file)
+    public static ProjectFile getProject(FileItem file)
     {
         return getProject(file.getPath());
     }
     
+    public static ProjectFile getProject(String file)
+    {
+        return getProject(new File(getPath(file)));
+    }
+    
     //public ArrayList<ProjectFile> getProjectArray()
-    public ArrayList<FileItem> getProjectArray()
+    public static ArrayList<FileItem> getProjectArray()
     {
         ArrayList<File> files = FileService.getFolder(getProjectDirectory(), true, false, "tk7pro");
         //ArrayList<ProjectFile> projects = new ArrayList();
@@ -66,22 +64,22 @@ public class ProjectManager
         for(int x = 0; x < files.size(); x++)
         {
             //projects.add(getProject(files.get(x)));
-            projects.add(new FileItem(files.get(x).getAbsoluteFile(), FileType.PROJECT));
+            projects.add(new FileItem(files.get(x).getAbsoluteFile(), FileType.PROJECT, files.get(x).lastModified()));
         }
         return projects;
     }
     
-    private String getProjectDirectory()
+    private static String getProjectDirectory()
     {
         return Engine.getAppVariable("BUILDER_PATH") + "Projects/";
     }
     
-    private String getProjectDirectory(String extend)
+    private static String getProjectDirectory(String extend)
     {
         return getProjectDirectory() + extend;
     }
     
-    private ArrayList<String> getProjectFolders()
+    private static ArrayList<String> getProjectFolders()
     {
         ArrayList<String> folders = new ArrayList();
         folders.add("Boards");

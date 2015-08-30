@@ -4,6 +4,7 @@ import app.Engine;
 //import config.ConfigManager;
 import file.FileService;
 import framework.files.FileAbstract;
+import framework.files.FileDate;
 import java.util.ArrayList;
 import java.util.Date;
 import framework.files.FileType;
@@ -14,7 +15,7 @@ public class ItemFile extends FileAbstract
     private ItemType itemType;
     private boolean itemKey;
     
-    public ItemFile(String path, String project, String file, String name, Date update, String type, boolean key)
+    public ItemFile(String path, String project, String file, String name, FileDate update, String type, boolean key)
     {
         super(name, path, project, FileType.ITEM, update);
         this.itemProject = project;
@@ -38,6 +39,7 @@ public class ItemFile extends FileAbstract
     {
         ArrayList<String> data = new ArrayList();
         data.add(this.itemName);
+        data.add(this.getFileDate().getData());
         data.add(this.itemType.toString());
         String key = "FALSE";
         if(this.itemKey) {key = "TRUE";}

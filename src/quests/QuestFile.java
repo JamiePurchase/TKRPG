@@ -1,6 +1,7 @@
 package quests;
 
 import framework.files.FileAbstract;
+import framework.files.FileDate;
 import framework.files.FileType;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +13,7 @@ public class QuestFile extends FileAbstract
     private int stageNow;
     private ArrayList<QuestStage> stageArray;
     
-    public QuestFile(String path, String project, Date update, String name, boolean found, boolean active, boolean complete, int stageNow, ArrayList<QuestStage> stageArray)
+    public QuestFile(String path, String project, FileDate update, String name, boolean found, boolean active, boolean complete, int stageNow, ArrayList<QuestStage> stageArray)
     {
         super(name, path, project, FileType.QUEST, update);
         this.name = name;

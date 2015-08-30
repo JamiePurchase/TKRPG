@@ -3,6 +3,7 @@ package tiles;
 import app.Engine;
 import file.FileService;
 import framework.files.FileAbstract;
+import framework.files.FileDate;
 import gfx.Drawing;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class TilesetFile extends FileAbstract
     private int tilesetCountX;
     private int tilesetCountY;
     
-    public TilesetFile(String path, String project, String file, String name, Date update, String sheet, int size, int cols, int rows)
+    public TilesetFile(String path, String project, String file, String name, FileDate update, String sheet, int size, int cols, int rows)
     {
         super(name, path, project, FileType.TILESET, update);
         this.tilesetName = name;

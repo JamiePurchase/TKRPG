@@ -2,21 +2,24 @@ package board;
 
 import app.Engine;
 import file.FileService;
+import framework.files.FileDate;
 import framework.files.FileItem;
+import framework.files.FileManager;
 import java.io.File;
 import java.util.ArrayList;
 import states.State;
 import framework.files.FileType;
 import java.util.Date;
+import tiles.TilesetManager;
 
 public class BoardManager
 {
-    private State state;
+    private FileManager manager;
     private String project;
     
-    public BoardManager(State state, String project)
+    public BoardManager(FileManager manager, String project)
     {
-        this.state = state;
+        this.manager = manager;
         this.project = project;
     }
     
@@ -26,7 +29,7 @@ public class BoardManager
         ArrayList<FileItem> items = new ArrayList();
         for(int x = 0; x < files.size(); x++)
         {
-            items.add(new FileItem(files.get(x), FileType.ITEM));
+            items.add(new FileItem(files.get(x), FileType.ITEM, files.get(x).lastModified()));
         }
         return items;
     }
@@ -52,12 +55,9 @@ public class BoardManager
         ArrayList<String> data = FileService.loadFile(getPath(file));
         
         // Create the Board Object
-        int sizeX = Integer.parseInt(data.get(1).split("\\|")[0]);
-        int sizeY = Integer.parseInt(data.get(1).split("\\|")[1]);
-        Date update = new Date();
-        BoardFile board = new BoardFile(getPath(file), project, update, file, data.get(0), sizeX, sizeY);
-        
-        // NOTE: need to get the update value as a string (from the file) and parse it into a date
+        int sizeX = Integer.parseInt(data.get(2).split("\\|")[0]);
+        int sizeY = Integer.parseInt(data.get(2).split("\\|")[1]);
+        BoardFile board = new BoardFile(getPath(file), project, new FileDate(data.get(1)), file, data.get(0), sizeX, sizeY);
         
         // Set the Board Terrain
         int tileX = 0;
@@ -68,10 +68,10 @@ public class BoardManager
         for(int tile = 0; tile < (sizeX * sizeY); tile++)
         {
             // Set Terrain
-            tileSet = data.get(tile + 2).split("\\|")[0];
-            tileCol = Integer.parseInt(data.get(tile + 2).split("\\|")[1]);
-            tileRow = Integer.parseInt(data.get(tile + 2).split("\\|")[2]);
-            //board.setTerrainAt(tileX, tileY, new BoardTerrain(this.state.managerTileset.loadTileset(tileSet), tileCol, tileRow));
+            tileSet = data.get(tile + 3).split("\\|")[0];
+            tileCol = Integer.parseInt(data.get(tile + 3).split("\\|")[1]);
+            tileRow = Integer.parseInt(data.get(tile + 3).split("\\|")[2]);
+            board.setTerrainAt(tileX, tileY, new BoardTerrain(this.manager.Tileset().loadTileset(tileSet), tileCol, tileRow));
             
             // Next Tile
             tileX ++;
@@ -81,6 +81,15 @@ public class BoardManager
                 tileY ++;
             }
         }
+        
+        // Set the Board Entities
+        // ??
+        
+        // Set the Board Zones
+        // ??
+        
+        // Set the Board Lighting
+        // ??
         
         // Return the Board Object
         return board;

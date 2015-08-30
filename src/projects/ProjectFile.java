@@ -1,21 +1,20 @@
 package projects;
 
-import file.FileService;
 import framework.files.FileAbstract;
+import framework.files.FileDate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import framework.files.FileType;
 
 public class ProjectFile extends FileAbstract
 {
-    private String updated;
+    private String initBoard, initCharacter;
     
-    public ProjectFile(String path, String name, Date update)
+    public ProjectFile(String path, String name, FileDate update, String board, String character)
     {
         super(name, path, name, FileType.PROJECT, update);
-        //this.updated = 
+        this.initBoard = board;
+        this.initCharacter = character;
     }
     
     public String getInfo()
@@ -25,22 +24,31 @@ public class ProjectFile extends FileAbstract
         return "V 1.0 - 15/08/2015";
     }
     
-    public String getUpdated()
+    public String getInitialBoard()
     {
-        return this.updated;
+        return this.initBoard;
+    }
+    
+    public String getInitialCharacter()
+    {
+        return this.initCharacter;
     }
     
     public void save()
     {
-        FileService.saveFile(this.saveData(), this.savePath());
-    }
-    
-    public ArrayList<String> saveData()
-    {
+        // Create an array of data
         ArrayList<String> data = new ArrayList();
+        
+        // Data: Project
         data.add(this.getFileName());
-        data.add(this.getUpdated());
-        return data;
+        data.add(this.getFileDate().getData());
+        
+        // Data: Initial Files
+        data.add(this.getInitialBoard());
+        data.add(this.getInitialCharacter());
+        
+        // Save the array of data
+        this.saveFile(data);
     }
     
     public String savePath()
@@ -48,9 +56,14 @@ public class ProjectFile extends FileAbstract
         return this.getFilePath();
     }
     
-    public void setUpdated()
+    public void setInitialBoard(String board)
     {
-        this.updated = new SimpleDateFormat("dd/mm/yyyy").format(Calendar.getInstance().getTime());
+        this.initBoard = board;
+    }
+    
+    public void setInitialCharacter(String character)
+    {
+        this.initCharacter = character;
     }
     
 }

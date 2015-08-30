@@ -2,23 +2,24 @@ package items;
 
 import app.Engine;
 import file.FileService;
+import framework.files.FileDate;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import projects.ProjectFile;
 import projects.ProjectManager;
-import states.State;
 import framework.files.FileItem;
+import framework.files.FileManager;
 import framework.files.FileType;
 
 public class ItemManager
 {
-    private State state;
+    private FileManager manager;
     private String project;
     
-    public ItemManager(State state, String project)
+    public ItemManager(FileManager manager, String project)
     {
-        this.state = state;
+        this.manager = manager;
         this.project = project;
     }
     
@@ -28,7 +29,7 @@ public class ItemManager
         ArrayList<FileItem> items = new ArrayList();
         for(int x = 0; x < files.size(); x++)
         {
-            items.add(new FileItem(files.get(x), FileType.ITEM));
+            items.add(new FileItem(files.get(x), FileType.ITEM, files.get(x).lastModified()));
         }
         return items;
     }
@@ -60,11 +61,8 @@ public class ItemManager
         
         // Create the Item Object
         boolean key = false;
-        if(data.get(2).equals("TRUE")) {key = true;}
-        Date update = new Date();
-        ItemFile item = new ItemFile(getPath(file), this.project, file, data.get(0), update, data.get(1), key);
-        
-        // NOTE: need to get the update value as a string (from the file) and parse it into a date
+        if(data.get(3).equals("TRUE")) {key = true;}
+        ItemFile item = new ItemFile(getPath(file), this.project, file, data.get(0), new FileDate(data.get(1)), data.get(2), key);
         
         // Return the Item Object
         return item;

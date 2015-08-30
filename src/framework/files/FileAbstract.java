@@ -8,15 +8,20 @@ public abstract class FileAbstract
 {
     private String fileName, filePath, fileProject;
     private FileType fileType;
-    private Date fileUpdate;
+    private FileDate fileUpdate;
     
-    public FileAbstract(String name, String path, String project, FileType type, Date update)
+    public FileAbstract(String name, String path, String project, FileType type, FileDate update)
     {
         this.fileName = name;
         this.filePath = path;
         this.fileProject = project;
         this.fileType = type;
         this.fileUpdate = update;
+    }
+    
+    public FileDate getFileDate()
+    {
+        return this.fileUpdate;
     }
     
     public String getFileName()
@@ -34,11 +39,6 @@ public abstract class FileAbstract
         return this.fileProject;
     }
     
-    public Date getFileUpdate()
-    {
-        return this.fileUpdate;
-    }
-    
     public abstract void save();
     
     public void saveFile(ArrayList<String> data)
@@ -46,9 +46,9 @@ public abstract class FileAbstract
         FileService.saveFile(data, this.getFilePath());
     }
     
-    public void setFileUpdate()
+    public void update()
     {
-        this.fileUpdate = new Date();
+        this.fileUpdate = new FileDate();
     }
     
 }
