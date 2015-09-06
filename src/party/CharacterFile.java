@@ -1,5 +1,6 @@
 package party;
 
+import debug.Console;
 import framework.files.FileAbstract;
 import framework.files.FileDate;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class CharacterFile extends FileAbstract
         this.characterTitle = title;
         
         // DEBUG
-        System.out.println("CHARACTER FILE (" + path + ", " + project + ", " + file + ", " + name + ", " + update.getDisplay() + ", " + title);
+        Console.print("CHARACTER FILE (" + path + ", " + project + ", " + file + ", " + name + ", " + update.getDisplay() + ", " + title);
     }
     
     public String getTitle()

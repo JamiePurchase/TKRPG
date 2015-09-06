@@ -2,6 +2,9 @@ package board;
 
 import app.Engine;
 import board.entities.Entity;
+import board.entities.EntityObject;
+import board.zones.Zone;
+import debug.Console;
 import framework.files.FileAbstract;
 import framework.files.FileDate;
 import gfx.Drawing;
@@ -10,6 +13,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import framework.files.FileType;
 import java.awt.Color;
+import java.awt.Point;
 
 public class BoardFile extends FileAbstract
 {
@@ -17,6 +21,7 @@ public class BoardFile extends FileAbstract
     private int boardSizeX, boardSizeY;
     private BoardTerrain[][] boardTerrain;
     private ArrayList<Entity> boardEntity;
+    private ArrayList<Zone> boardZone;
     
     public BoardFile(String path, String project, FileDate update, String file, String name, int sizeX, int sizeY)
     {
@@ -28,9 +33,13 @@ public class BoardFile extends FileAbstract
         this.boardSizeY = sizeY;
         this.boardTerrain = new BoardTerrain[sizeX][sizeY];
         this.boardEntity = new ArrayList();
+        this.boardZone = new ArrayList();
         
         // NOTE: when a board is being loaded for the game engine, it would be wise to create a massive BufferedImage
         // made up of all of the terrain images, that can provide subimages as the player moves around
+        
+        // TEMP
+        this.addEntity(new EntityObject(this, "BARREL1", 192, 256));
     }
     
     public void addEntity(Entity entity)
@@ -38,9 +47,66 @@ public class BoardFile extends FileAbstract
         this.boardEntity.add(entity);
     }
     
+    public void addZone(Zone zone)
+    {
+        this.boardZone.add(zone);
+    }
+    
+    public boolean getAreaFree(Rectangle rect)
+    {
+        // Check Entities
+        if(this.getEntityIntersect(rect, true, false) != null) {return false;}
+        
+        // Check Zones
+        if(this.getZoneIntersect(rect, true) != null) {return false;}
+        
+        // Area Free
+        return true;
+    }
+    
     public Entity getEntity(int position)
     {
         return this.boardEntity.get(position);
+    }
+    
+    public Entity getEntityIntersect(Rectangle rect, boolean solid, boolean player)
+    {
+        int entity = this.getEntityIntersectIndex(rect, solid, player);
+        if(entity >= 0)
+        {
+            return this.boardEntity.get(entity);
+        }
+        return null;
+    }
+    
+    public int getEntityIntersectIndex(Rectangle rect, boolean solid, boolean player)
+    {
+        for(int x = 0; x < this.boardEntity.size(); x++)
+        {
+            if(this.boardEntity.get(x).getCollisionArea().intersects(rect))
+            {
+                if(solid)
+                {
+                    if(this.boardEntity.get(x).isSolid())
+                    {
+                        if(player == false)
+                        {
+                            if(this.boardEntity.get(x).isPlayer() == false) {return x;}
+                        }
+                        else {return x;}
+                    }
+                }
+                else
+                {
+                    if(player == false)
+                    {
+                        if(this.boardEntity.get(x).isPlayer() == false) {return x;}
+                    }
+                    else {return x;}
+                }
+            }
+        }
+        return -1;
     }
     
     public ArrayList<Entity> getEntityList()
@@ -73,10 +139,63 @@ public class BoardFile extends FileAbstract
         return this.boardTerrain[posX][posY];
     }
     
-    public void render(Graphics g, Rectangle area, int offsetX, int offsetY, boolean grid)
+    public Zone getZoneContain(Point point)
+    {
+        int zone = this.getZoneContainIndex(point);
+        if(zone >= 0) {return this.boardZone.get(zone);}
+        return null;
+    }
+    
+    public int getZoneContainIndex(Point point)
+    {
+        for(int x = 0; x < this.boardZone.size(); x++)
+        {
+            if(this.boardZone.get(x).getArea().contains(point)) {return x;}
+        }
+        return -1;
+    }
+    
+    public Zone getZoneIntersect(Rectangle rect, boolean solid)
+    {
+        int zone = this.getZoneIntersectIndex(rect, solid);
+        if(zone >= 0)
+        {
+            return this.boardZone.get(zone);
+        }
+        return null;
+    }
+    
+    public int getZoneIntersectIndex(Rectangle rect, boolean solid)
+    {
+        for(int x = 0; x < this.boardZone.size(); x++)
+        {
+            if(this.boardZone.get(x).getArea().intersects(rect))
+            {
+                if(solid)
+                {
+                    if(this.boardZone.get(x).isSolid()) {return x;}
+                }
+                else {return x;}
+            }
+        }
+        return -1;
+    }
+    
+    public ArrayList<Zone> getZoneList()
+    {
+        return this.boardZone;
+    }
+    
+    public void removeZone(int index)
+    {
+        this.boardZone.remove(index);
+    }
+    
+    public void render(Graphics g, Rectangle area, int offsetX, int offsetY, boolean grid, boolean zone)
     {
         this.renderTerrain(g, area, offsetX, offsetY, grid);
         //this.renderEntity(g, area, offsetX, offsetY);
+        if(zone) {this.renderZone(g, area, offsetX, offsetY);}
     }
     
     private void renderEntity(Graphics g, Rectangle area, int offsetX, int offsetY)
@@ -98,6 +217,20 @@ public class BoardFile extends FileAbstract
                 Drawing.drawImage(g, this.boardTerrain[x + offsetX][y + offsetY].getImage(), area.x + (x * 32), area.y + (y * 32));
                 if(grid) {Drawing.drawRect(g, area.x + (x * 32), area.y + (y * 32), 32, 32, Color.BLACK);}
             }
+        }
+    }
+    
+    private void renderZone(Graphics g, Rectangle area, int offsetX, int offsetY)
+    {
+        // DEBUG
+        //Console.print("BOARD -> RENDER ZONE");
+        
+        for(int x = 0; x < this.boardZone.size(); x++)
+        {
+            // DEBUG
+            //Console.print(" " + x + " drawing at {" + this.boardZone.get(x).getArea().xpoints + "} {" + this.boardZone.get(x).getArea().ypoints + "}");
+            
+            this.boardZone.get(x).render(g, area, offsetX, offsetY);
         }
     }
     
@@ -130,7 +263,11 @@ public class BoardFile extends FileAbstract
         }
         
         // Data: Zones
-        //
+        data.add("" + this.boardZone.size());
+        for(int e = 0; e < this.boardZone.size(); e++)
+        {
+            data.add(this.boardZone.get(e).getData());
+        }
         
         // Data: Lighting
         //

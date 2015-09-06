@@ -1,6 +1,9 @@
 package board;
 
 import app.Engine;
+import board.zones.Zone;
+import board.zones.ZoneCollision;
+import debug.Console;
 import file.FileService;
 import framework.files.FileDate;
 import framework.files.FileItem;
@@ -9,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import states.State;
 import framework.files.FileType;
+import java.awt.Polygon;
 import java.util.Date;
 import tiles.TilesetManager;
 
@@ -60,6 +64,7 @@ public class BoardManager
         BoardFile board = new BoardFile(getPath(file), project, new FileDate(data.get(1)), file, data.get(0), sizeX, sizeY);
         
         // Set the Board Terrain
+        int nextLine = 0;
         int tileX = 0;
         int tileY = 0;
         String tileSet = "";
@@ -80,13 +85,38 @@ public class BoardManager
                 tileX = 0;
                 tileY ++;
             }
+            
+            // Next Line
+            nextLine = tile + 4;
         }
         
         // Set the Board Entities
-        // ??
+        nextLine += 1;
         
         // Set the Board Zones
-        // ??
+        int zoneTotal = Integer.parseInt(data.get(nextLine));
+        for(int zoneX = 0; zoneX < zoneTotal; zoneX++)
+        {
+            // Load zone data
+            String[] polyData = data.get(nextLine + zoneX + 1).split("\\|");
+            int polyCount = Integer.parseInt(polyData[2]);
+            
+            // Create zone points
+            int[] polyX = new int[polyCount];
+            int[] polyY = new int[polyCount];
+            for(int poly = 0; poly < polyCount; poly++)
+            {
+                polyX[poly] = Integer.parseInt(polyData[3].split("\\-")[poly]);
+                polyY[poly] = Integer.parseInt(polyData[4].split("\\-")[poly]);
+            }
+            
+            // Build board zone
+            if(polyData[1].equals("COLLISION"))
+            {
+                board.addZone(new ZoneCollision(board, new Polygon(polyX, polyY, polyCount), polyData[0]));
+            }
+            //if(polyData[1].equals("???"))
+        }
         
         // Set the Board Lighting
         // ??

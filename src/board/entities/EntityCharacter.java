@@ -3,11 +3,15 @@ package board.entities;
 import app.Engine;
 import board.BoardFile;
 import board.Direction;
+import board.zones.Zone;
 import framework.files.FileManager;
 import gfx.Drawing;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import party.CharacterFile;
+import states.System;
 
 public class EntityCharacter extends Entity
 {
@@ -17,9 +21,9 @@ public class EntityCharacter extends Entity
     private int entityAnimTickNow, entityAnimTickMax;
     private int entityAnimFrameNow, entityAnimFrameMax;
     
-    public EntityCharacter(BoardFile board, String ref, int posX, int posY, CharacterFile character)
+    public EntityCharacter(BoardFile board, String ref, int posX, int posY, CharacterFile character, boolean player)
     {
-        super(board, ref, posX, posY, EntityType.CHARACTER);
+        super(board, ref, posX, posY, EntityType.CHARACTER, player);
         this.entityCharacter = character;
         this.entityAction = EntityAction.IDLE;
         this.entityDirection = Direction.SOUTH;
@@ -29,9 +33,39 @@ public class EntityCharacter extends Entity
         this.entityAnimFrameMax = 0;
     }
     
+    public Rectangle getCollideRect()
+    {
+        int posX = this.getPositionX();
+        int posY = this.getPositionY();
+        if(this.entityDirection == Direction.EAST) {posX += 8;}
+        if(this.entityDirection == Direction.NORTH) {posY -= 8;}
+        if(this.entityDirection == Direction.SOUTH) {posY += 8;}
+        if(this.entityDirection == Direction.WEST) {posX -= 8;}
+        return new Rectangle(posX, posY, 32, 32);
+    }
+    
+    public Rectangle getInteractRect()
+    {
+        int posX = this.getPositionX();
+        int posY = this.getPositionY();
+        if(this.entityDirection == Direction.EAST) {posX += 24;}
+        if(this.entityDirection == Direction.NORTH) {posY -= 24;}
+        if(this.entityDirection == Direction.SOUTH) {posY += 24;}
+        if(this.entityDirection == Direction.WEST) {posX -= 24;}
+        return new Rectangle(posX, posY, 32, 32);
+    }
+    
+    public void interact(System system)
+    {
+        //
+    }
+    
     public void render(Graphics g, int posX, int posY)
     {
         this.renderEntity(g, this.getRenderImage(), posX, posY);
+        
+        // DEBUG
+        Drawing.drawRect(g, this.getInteractRect(), Color.RED);
     }
     
     private BufferedImage getRenderImage()
@@ -56,15 +90,21 @@ public class EntityCharacter extends Entity
             this.entityAnimTickNow += 1;
             if(this.entityAnimTickNow >= this.entityAnimTickMax)
             {
-                // TEMP
+                // Look at potential destination
                 int moveX = this.getPositionX();
                 int moveY = this.getPositionY();
                 if(this.entityDirection == Direction.EAST) {moveX += 8;}
                 if(this.entityDirection == Direction.NORTH) {moveY -= 8;}
                 if(this.entityDirection == Direction.SOUTH) {moveY += 8;}
                 if(this.entityDirection == Direction.WEST) {moveX -= 8;}
-                this.setPosition(moveX, moveY);
-                    
+                
+                // Move to destination if there's no collision
+                if(this.getBoard().getAreaFree(this.getCollideRect()))
+                {
+                    this.setPosition(moveX, moveY);
+                }
+                
+                // Advance Frame
                 this.entityAnimTickNow = 0;
                 this.entityAnimFrameNow += 1;
                 if(this.entityAnimFrameNow >= this.entityAnimFrameMax)
